@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POP ART大连之旅</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        :root {
+            --pop-red: #FF3B30;
+            --pop-yellow: #FFCC00;
+            --pop-blue: #007AFF;
+            --pop-black: #000000;
+            --pop-white: #FFFFFF;
+            --dot-size: 1px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--pop-yellow);
+            color: var(--pop-black);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        
+        /* 波普艺术点阵效果 */
+        .halftone {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .halftone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(var(--pop-black) var(--dot-size), transparent var(--dot-size));
+            background-size: 8px 8px;
+            z-index: 1;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        
+        /* 漫画对话框 */
+        .speech-bubble {
+            position: relative;
+            background: var(--pop-white);
+            border: 3px solid var(--pop-black);
+            padding: 15px;
+            border-radius: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            right: 30px;
+            border-width: 20px 0 0 20px;
+            border-style: solid;
+            border-color: var(--pop-black) transparent;
+            display: block;
+            width: 0;
+        }
+        
+        .speech-bubble:before {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            right: 33px;
+            border-width: 17px 0 0 17px;
+            border-style: solid;
+            border-color: var(--pop-white) transparent;
+            display: block;
+            width: 0;
+            z-index: 1;
+        }
+        
+        /* 爆炸形状 */
+        .burst-shape {
+            position: absolute;
+            background: var(--pop-red);
+            color: var(--pop-white);
+            padding: 10px 20px;
+            font-weight: bold;
+            transform: rotate(-15deg);
+            border: 3px solid var(--pop-black);
+            box-shadow: 5px 5px 0 var(--pop-black);
+            z-index: 10;
+        }
+        
+        .star-burst {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            width: 60px;
+            height: 60px;
+            background: var(--pop-red);
+            border: 3px solid var(--pop-black);
+            transform: rotate(45deg);
+            z-index: 5;
+        }
+        
+        .star-burst::before, .star-burst::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--pop-red);
+            border: 3px solid var(--pop-black);
+            z-index: -1;
+        }
+        
+        .star-burst::before {
+            transform: rotate(30deg);
+        }
+        
+        .star-burst::after {
+            transform: rotate(60deg);
+        }
+        
+        /* 漫画式标题 */
+        .comic-title {
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 0 var(--pop-black);
+            -webkit-text-stroke: 1px var(--pop-black);
+        }
+        
+        /* 漫画分割线 */
+        .comic-divider {
+            height: 4px;
+            background-color: var(--pop-black);
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        /* 日期标签 */
+        .date-badge {
+            background: var(--pop-blue);
+            color: var(--pop-white);
+            border: 3px solid var(--pop-black);
+            padding: 8px 16px;
+            font-weight: bold;
+            font-size: 1.2em;
+            transform: rotate(-3deg);
+            box-shadow: 3px 3px 0 var(--pop-black);
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        /* 活动卡片 */
+        .activity-card {
+            background: var(--pop-white);
+            border: 3px solid var(--pop-black);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 5px 5px 0 var(--pop-black);
+        }
+        
+        /* 时间标签 */
+        .time-badge {
+            background: var(--pop-yellow);
+            padding: 5px 10px;
+            border: 2px solid var(--pop-black);
+            font-weight: bold;
+            display: inline-block;
+            transform: rotate(-2deg);
+            box-shadow: 2px 2px 0 var(--pop-black);
+            margin-bottom: 10px;
+        }
+        
+        /* 拟声词装饰 */
+        .sound-effect {
+            position: absolute;
+            color: var(--pop-red);
+            font-weight: bold;
+            font-size: 1.5em;
+            transform: rotate(10deg);
+            text-shadow: 1px 1px 0 var(--pop-black);
+        }
+        
+        /* 图标样式 */
+        .icon-pop {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            background: var(--pop-blue);
+            color: var(--pop-white);
+            border: 2px solid var(--pop-black);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        /* 粗黑轮廓 */
+        .black-outline {
+            border: 3px solid var(--pop-black);
+        }
+        
+        /* 页面容器 */
+        .page-container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 页面切换 */
+        .page-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .nav-button {
+            background: var(--pop-red);
+            color: var(--pop-white);
+            border: 3px solid var(--pop-black);
+            padding: 10px 20px;
+            font-weight: bold;
+            box-shadow: 3px 3px 0 var(--pop-black);
+            cursor: pointer;
+        }
+        
+        /* 文字气泡 */
+        .text-bubble {
+            background: var(--pop-white);
+            border: 2px solid var(--pop-black);
+            border-radius: 20px;
+            padding: 10px 15px;
+            position: relative;
+            margin: 10px 0;
+        }
+        
+        /* 漫画格子布局 */
+        .comic-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 480px) {
+            .comic-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 信息表 */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .info-table th, .info-table td {
+            border: 2px solid var(--pop-black);
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .info-table th {
+            background-color: var(--pop-blue);
+            color: var(--pop-white);
+        }
+        
+        .info-table tr:nth-child(even) {
+            background-color: var(--pop-yellow);
+        }
+        
+        .info-table tr:nth-child(odd) {
+            background-color: var(--pop-white);
+        }
+    </style>
+</head>
+<body class="halftone">
+    <div class="page-container">
+        <!-- 标题区域 -->
+        <div class="relative mb-8">
+            <div class="star-burst"></div>
+            <h1 class="comic-title text-4xl text-center text-white mb-2" style="background-color: var(--pop-red); padding: 20px; border: 4px solid var(--pop-black);">大连三日游!</h1>
+            <div class="burst-shape" style="top: 90px; right: 20px;">WOW!</div>
+        </div>
+        
+        <!-- 行程信息 -->
+        <div class="speech-bubble mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <span class="font-bold">DALIAN 2025</span>
+                    <div class="flex items-center mt-2">
+                        <div class="icon-pop">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <span>行程天数: 3天</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center mb-2">
+                        <div class="icon-pop">
+                            <i class="fas fa-sun"></i>
+                        </div>
+                        <span>最佳季节: 5-10月</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="icon-pop">
+                            <i class="fas fa-cloud-sun"></i>
+                        </div>
+                        <span>天气: 晴转多云, 16°C/8°C</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sound-effect" style="top: 210px; left: 10px;">BOOM!</div>
+        
+        <!-- 第一天 -->
+        <div class="mb-10">
+            <div class="date-badge">DAY 1: 城市精华!</div>
+            
+            <div class="activity-card">
+                <div class="time-badge">09:00-10:30</div>
+                <h3 class="text-xl font-bold flex items-center">
+                    <div class="icon-pop"><i class="fas fa-monument"></i></div>
+                    星海广场
+                </h3>
+                <p class="ml-10 text-bubble">
+                    亚洲最大的城市广场，欣赏音乐喷泉表演!
+                </p>
+                <p class="text-sm mt-2 flex items-start">
+                    <i class="fas fa-map-marker-alt mr-2 mt-1 text-red-600"></i>
+                    大连市沙河口区中山路
+                </p>
+                <div class="mt-2 text-sm" style="background: var(--pop-yellow); padding: 5px; border: 1px solid var(--pop-black);">
+                    <i class="fas fa-star"></i> FREE! 免费参观
+                </div>
+            </div>
+            
+            <div class="activity-card" style="background-color: var(--pop-blue);">
+                <div class="time-badge" style="background-color: var(--pop-red);">11:00-12:30</div>
+                <h3 class="text-xl font-bold flex items-center text-white">
+                    <div class="icon-pop" style="background-color: var(--pop-red);"><i class="fas fa-utensils"></i></div>
+                    海鲜午餐
+                </h3>
+                <p class="ml-10 text-bubble">
+                    钱库里海鲜自助，当地新鲜海鲜，自助形式!
+                </p>
+                <p class="text-sm mt-2 flex items-start text-white">
+                    <i class="fas fa-map-marker-alt mr-2 mt-1"></i>
+                    星海广场店
+                </p>
+                <div class="mt-2 text-sm" style="background: var(--pop-white); padding: 5px; border: 1px solid var(--pop-black);">
+                    <i class="fas fa-yen-sign"></i> 人均约¥150
+                </div>
+            </div>
+            
+            <div class="comic-grid">
+                <div class="activity-card">
+                    <div class="time-badge">13:00-17:00</div>
+                    <h3 class="text-xl font-bold flex items-center">
+                        <div class="icon-pop"><i class="fas fa-water"></i></div>
+                        老虎滩海洋公园
+                    </h3>
+                    <p class="text-sm mt-2 flex items-start">
+                        <i class="fas fa-map-marker-alt mr-2 mt-1 text-red-600"></i>
+                        滨海中路9号
+                    </p>
+                    <div class="mt-2 text-sm" style="background: var(--pop-yellow); padding: 5px; border: 1px solid var(--pop-black);">
+                        <i class="fas fa-ticket-alt"></i> 门票¥190
+                    </div>
+                </div>
+                
+                <div class="activity-card">
+                    <div class="time-badge">17:30-20:00</div>
+                    <h3 class="text-xl font-bold flex items-center">
+                        <div class="icon-pop"><i class="fas fa-store"></i></div>
+                        俄罗斯风情街
+                    </h3>
+                    <p class="text-sm mt-2 flex items-start">
+                        <i class="fas fa-map-marker-alt mr-2 mt-1 text-red-600"></i>
+                        西岗区团结街
+                    </p>
+                    <div class="mt-2 text-sm" style="background: var(--pop-yellow); padding: 5px; border: 1px solid var(--pop-black);">
+                        <i class="fas fa-star"></i> 品尝俄式美食!
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="comic-divider"></div>
+        
+        <!-- 第二天 -->
+        <div class="mb-10">
+            <div class="date-badge" style="background-color: var(--pop-red);">DAY 2: 自然探索!</div>
+            
+            <div class="activity-card" style="background-color: var(--pop-yellow);">
+                <div class="time-badge" style="background-color: var(--pop-blue);">08:30-12:30</div>
+                <h3 class="text-xl font-bold flex items-center">
+                    <div class="icon-pop"><i class="fas fa-mountain"></i></div>
+                    金石滩国家旅游度假区
+                </h3>
+                <p class="ml-10 text-bubble">
+                    地质奇观，"中国北方第一滩"!
+                </p>
+                <p class="text-sm mt-2 flex items-start">
+                    <i class="fas fa-map-marker-alt mr-2 mt-1 text-red-600"></i>
+                    金普新区开发区金石路65号
+                </p>
+                <div class="mt-2 text-sm" style="background: var(--pop-white); padding: 5px; border: 1px solid var(--pop-black);">
+                    <i class="fas fa-thumbs-up"></i> AAAAA级景区
+                </div>
+            </div>
+            
+            <div class="comic-grid">
+                <div class="activity-card">
+                    <div class="time-badge">12:30-13:30</div>
+                    <h3 class="text-xl font-bold flex items-center">
+                        <div class="icon-pop"><i class="fas fa-utensils"></i></div>
+                        度假区内用餐
+                    </h3>
+                    <div class="mt-2 text-sm" style="background: var(--pop-yellow); padding: 5px; border: 1px solid var(--pop-black);">
+                        <i class="fas fa-yen-sign"></i> 人均约¥100
+                    </div>
+                </div>
+                
+                <div class="activity-card">
+                    <div class="time-badge">14:00-16:00</div>
+                    <h3 class="text-xl font-bold flex items-center">
+                        <div class="icon-pop"><i class="fas fa-umbrella-beach"></i></div>
+                        金石滩-海滨公园
+                    </h3>
+                    <p class="text-sm mt-2">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        碧海蓝天，怪石嶙峋
+                    </p>
+                </div>
+            </div>
+            
+            <div class="activity-card" style="background-color: var(--pop-blue); color: var(--pop-white);">
+                <div class="time-badge">17:00-20:00</div>
+                <h3 class="text-xl font-bold flex items-center">
+                    <div class="icon-pop" style="background-color: var(--pop-red);"><i class="fas fa-moon"></i></div>
+                    星海湾夜景
+                </h3>
+                <p class="ml-10 text-bubble">
+                    灯光璀璨的夜景，海风习习!
+                </p>
+                <p class="text-sm mt-2">
+                    <i class="fas fa-utensils mr-2"></i>
+                    晚餐推荐: 南山小渔村海鲜大排档
+                </p>
+            </div>
+        </div>
+        
+        <div class="comic-divider"></div>
+        
+        <!-- 第三天 -->
+        <div class="mb-10">
+            <div class="date-badge" style="background-color: var(--pop-blue);">DAY 3: 历史文化!</div>
+            
+            <div class="activity-card">
+                <div class="time-badge">09:00-12:00</div>
+                <h3 class="text-xl font-bold flex items-center">
+                    <div class="icon-pop"><i class="fas fa-landmark"></i></div>
+                    旅顺口景区(军港游园)
+                </h3>
+                <p class="text-sm mt-2 flex items-start">
+                    <i class="fas fa-map-marker-alt mr-2 mt-1 text-red-600"></i>
+                    旅顺口区黄河路10号
+                </p>
+                <div class="mt-2 text-sm" style="background: var(--pop-yellow); padding: 5px; border: 1px solid var(--pop-black);">
+                    <i class="fas fa-history"></i> 了解近代历史
+                </div>
+            </div>
+            
+            <div class="comic-grid">
+                <div class="activity-card" style="background-color: var(--pop-yellow);">
+                    <div class="time-badge" style="background-color: var(--pop-red);">12:00-13:00</div>
+                    <h3 class="text-xl font-bold flex items-center">
+                        <div class="icon-pop"><i class="fas fa-utensils"></i></div>
+                        旅顺特色餐厅
+                    </h3>
+                    <div class="mt-2 text-sm" style="background: var(--pop-white); padding: 5px; border: 1px solid var(--pop-black);">
+                        <i class="fas fa-utensils"></i> 海鲜水饺、锅包肉
+                    </div>
+                </div>
+                
+                <div class="activity-card" style="background-color: var(--pop-red); color: white;">
+                    <div class="time-badge" style="background-color: var(--pop-blue);">14:00-16:00</div>
+                    <h3 class="text-xl font-bold flex items-center">
+                        <div class="icon-pop"><i class="fas fa-route"></i></div>
+                        滨海路风光带
+                    </h3>
+                    <div class="mt-2 text-sm" style="background: var(--pop-white); color: black; padding: 5px; border: 1px solid var(--pop-black);">
+                        <i class="fas fa-camera"></i> "东方夏威夷"
+                    </div>
+                </div>
+            </div>
+            
+            <div class="activity-card">
+                <div class="time-badge">16:30-20:00</div>
+                <h3 class="text-xl font-bold flex items-center">
+                    <div class="icon-pop"><i class="fas fa-shopping-bag"></i></div>
+                    大连购物与美食
+                </h3>
+                <p class="text-sm mt-2 flex items-start">
+                    <i class="fas fa-map-marker-alt mr-2 mt-1 text-red-600"></i>
+                    天津街商业区、西安路商业街
+                </p>
+                <p class="ml-10 text-bubble">
+                    晚餐推荐: 中原海鲜餐厅(大连人自家的小店)
+                </p>
+            </div>
+        </div>
+        
+        <div class="comic-divider"></div>
+        
+        <!-- 实用信息 -->
+        <div class="mb-10">
+            <div class="burst-shape" style="top: -15px; left: 30px;">TIPS!</div>
+            <div class="speech-bubble mt-10">
+                <h2 class="text-2xl font-bold mb-4 text-center">实用信息</h2>
+                
+                <div class="comic-grid">
+                    <div class="text-bubble flex items-center">
+                        <div class="icon-pop"><i class="fas fa-hotel"></i></div>
+                        <span>星海广场亚朵S酒店</span>
+                    </div>
+                    <div class="text-bubble flex items-center">
+                        <div class="icon-pop"><i class="fas fa-subway"></i></div>
+                        <span>地铁1号线连接主要景点</span>
+                    </div>
+                    <div class="text-bubble flex items-center">
+                        <div class="icon-pop"><i class="fas fa-credit-card"></i></div>
+                        <span>景点门票总计约¥350</span>
+                    </div>
+                    <div class="text-bubble flex items-center">
+                        <div class="icon-pop"><i class="fas fa-mobile-alt"></i></div>
+                        <span>全程4G/5G网络覆盖</span>
+                    </div>
+                </div>
+                
+                <h3 class="font-bold mt-4 mb-2">特色美食</h3>
+                <ul class="pl-5">
+                    <li class="flex items-center mb-2">
+                        <span style="color: var(--pop-red); font-weight: bold; margin-right: 5px;">•</span>
+                        海鲜水饺、烤冷面
+                    </li>
+                    <li class="flex items-center mb-2">
+                        <span style="color: var(--pop-red); font-weight: bold; margin-right: 5px;">•</span>
+                        锅包肉、大连凉菜
+                    </li>
+                </ul>
+                
+                <div class="font-bold mt-4" style="background: var(--pop-yellow); padding: 8px; border: 2px solid var(--pop-black);">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    海边注意防晒，带外套（昼夜温差大）
+                </div>
+            </div>
+        </div>
+        
+        <!-- 紧急联系 -->
+        <div class="black-outline bg-white p-4 rounded-lg mb-10">
+            <h3 class="font-bold text-center mb-3">EMERGENCY!</h3>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="flex items-center">
+                    <i class="fas fa-phone-alt text-red-600 mr-2"></i>
+                    <span>旅游咨询: 0411-12301</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-ambulance text-red-600 mr-2"></i>
+                    <span>急救电话: 120</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-red-600 mr-2"></i>
+                    <span>报警电话: 110</span>
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-taxi text-red-600 mr-2"></i>
+                    <span>出租车: 0411-96600</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mb-5 comic-title" style="color: var(--pop-red);">
+            BON VOYAGE!
+        </div>
+        
+        <div class="text-center text-xs mt-10 text-gray-700">
+            © 2025 POP ART TRAVEL GUIDE
+        </div>
+    </div>
+    
+    <script>
+        // 简单的页面滚动动画
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
