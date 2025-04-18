@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大连三日游旅行规划表</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 打印友好的设计 */
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            line-height: 1.5;
+            background-color: #fff;
+            color: #333;
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            padding: 10mm;
+            position: relative;
+        }
+        
+        /* 页面装饰 */
+        .decoration {
+            position: absolute;
+            top: 10mm;
+            right: 10mm;
+            width: 30mm;
+            height: 30mm;
+            opacity: 0.1;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,5 L95,50 L50,95 L5,50 Z" fill="%23007bff"/></svg>');
+            background-repeat: no-repeat;
+            z-index: -1;
+        }
+        
+        /* 剪裁线 */
+        .clip-line-top, .clip-line-bottom, .clip-line-left, .clip-line-right {
+            position: absolute;
+            border-style: dashed;
+            border-color: #ccc;
+            border-width: 0;
+        }
+        
+        .clip-line-top, .clip-line-bottom {
+            left: 5mm;
+            right: 5mm;
+            height: 0;
+            border-top-width: 1px;
+        }
+        
+        .clip-line-left, .clip-line-right {
+            top: 5mm;
+            bottom: 5mm;
+            width: 0;
+            border-left-width: 1px;
+        }
+        
+        .clip-line-top { top: 5mm; }
+        .clip-line-bottom { bottom: 5mm; }
+        .clip-line-left { left: 5mm; }
+        .clip-line-right { right: 5mm; }
+        
+        /* 标题区域 */
+        header {
+            margin-bottom: 4mm;
+            text-align: center;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 24px;
+            color: #1a73e8;
+            margin-bottom: 5mm;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -2mm;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #1a73e8;
+        }
+        
+        .trip-info {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 4mm;
+            padding: 2mm;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        .trip-info div {
+            display: flex;
+            align-items: center;
+        }
+        
+        .trip-info i {
+            margin-right: 2mm;
+            color: #1a73e8;
+        }
+        
+        /* 内容区域 */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4mm;
+        }
+        
+        /* 日程卡片 */
+        .day-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            break-inside: avoid;
+        }
+        
+        .day-header {
+            background-color: #1a73e8;
+            color: white;
+            padding: 2mm 4mm;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .day-content {
+            padding: 2mm;
+        }
+        
+        /* 时间表 */
+        .timeline {
+            position: relative;
+            margin: 2mm 0 2mm 4mm;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 1px;
+            background-color: #e0e0e0;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 6mm;
+            padding-bottom: 3mm;
+        }
+        
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.5mm;
+            top: 1.5mm;
+            width: 3mm;
+            height: 3mm;
+            border-radius: 50%;
+            background-color: #1a73e8;
+        }
+        
+        .time {
+            color: #1a73e8;
+            font-weight: 500;
+            margin-bottom: 1mm;
+        }
+        
+        .activity {
+            margin-bottom: 1mm;
+        }
+        
+        .location {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 1mm;
+        }
+        
+        .note {
+            background-color: #f8f9fa;
+            padding: 1mm 2mm;
+            border-left: 2px solid #1a73e8;
+            font-size: 0.9em;
+            margin-top: 1mm;
+        }
+        
+        /* 实用信息区 */
+        .info-section {
+            margin-top: 4mm;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        
+        .info-header {
+            background-color: #f8f9fa;
+            padding: 2mm 4mm;
+            font-weight: 500;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .info-content {
+            padding: 2mm 4mm;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2mm;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9em;
+        }
+        
+        .info-item i {
+            width: 5mm;
+            margin-right: 2mm;
+            color: #1a73e8;
+        }
+        
+        /* 图标样式 */
+        .icon-container {
+            display: inline-block;
+            width: 4mm;
+            text-align: center;
+            margin-right: 1mm;
+        }
+        
+        /* 打印按钮 */
+        .print-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        
+        .print-button i {
+            margin-right: 4px;
+        }
+        
+        @media print {
+            .print-button {
+                display: none;
+            }
+            
+            .no-print {
+                display: none;
+            }
+            
+            body {
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                height: auto;
+            }
+        }
+        
+        /* 紧急信息 */
+        .emergency {
+            margin-top: 4mm;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            border-top: 1px dashed #ccc;
+            padding-top: 2mm;
+        }
+        
+        .emergency div {
+            display: flex;
+            align-items: center;
+        }
+        
+        .emergency i {
+            color: #d32f2f;
+            margin-right: 1mm;
+        }
+    </style>
+</head>
+<body>
+    <!-- 装饰 -->
+    <div class="decoration"></div>
+    <div class="clip-line-top"></div>
+    <div class="clip-line-bottom"></div>
+    <div class="clip-line-left"></div>
+    <div class="clip-line-right"></div>
+    
+    <!-- 标题区域 -->
+    <header>
+        <h1>大连三日游旅行规划表</h1>
+        <div class="trip-info">
+            <div><i class="fas fa-calendar-alt"></i> 行程天数: 3天</div>
+            <div><i class="fas fa-sun"></i> 最佳季节: 5月-10月</div>
+            <div><i class="fas fa-cloud-sun"></i> 天气: 晴转多云, 16°C/8°C</div>
+        </div>
+    </header>
+    
+    <!-- 内容区域 -->
+    <div class="container">
+        <!-- 第一天 -->
+        <div class="day-card">
+            <div class="day-header">
+                <span>第一天</span>
+                <span>城市精华景观游</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="time">09:00-10:30</div>
+                        <div class="activity"><i class="fas fa-monument"></i> 星海广场</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>大连市沙河口区中山路</div>
+                        <div class="note">亚洲最大的城市广场，欣赏音乐喷泉表演，免费参观</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">11:00-12:30</div>
+                        <div class="activity"><i class="fas fa-utensils"></i> 海鲜午餐</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>钱库里海鲜自助(星海广场店)</div>
+                        <div class="note">当地新鲜海鲜，自助形式，人均约¥150</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">13:00-17:00</div>
+                        <div class="activity"><i class="fas fa-water"></i> 老虎滩海洋公园</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>大连市中山区滨海中路9号</div>
+                        <div class="note">AAAAA级景区，门票¥190，极地馆、海洋馆必去</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">17:30-20:00</div>
+                        <div class="activity"><i class="fas fa-store"></i> 俄罗斯风情街</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>大连市西岗区团结街</div>
+                        <div class="note">异域风情街区，品尝俄式美食，购买特色商品</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 第二天 -->
+        <div class="day-card">
+            <div class="day-header">
+                <span>第二天</span>
+                <span>自然与历史探索</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="time">08:30-12:30</div>
+                        <div class="activity"><i class="fas fa-mountain"></i> 金石滩国家旅游度假区</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>大连市金普新区开发区金石路65号</div>
+                        <div class="note">AAAAA级景区，地质奇观，必看景点：恐龙探海、金石园</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">12:30-13:30</div>
+                        <div class="activity"><i class="fas fa-utensils"></i> 度假区内用餐</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>金石滩园区内海鲜餐厅</div>
+                        <div class="note">新鲜海产品，金石滩特色菜，人均约¥100</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">14:00-16:00</div>
+                        <div class="activity"><i class="fas fa-umbrella-beach"></i> 金石滩-海滨公园</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>金普新区开发区金石滩国家旅游度假区内</div>
+                        <div class="note">碧海蓝天，怪石嶙峋，欣赏自然风光</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">17:00-20:00</div>
+                        <div class="activity"><i class="fas fa-moon"></i> 星海湾夜景</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>大连市沙河口区海湾街1号</div>
+                        <div class="note">晚餐推荐：南山小渔村海鲜大排档(星海店)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 第三天 -->
+        <div class="day-card">
+            <div class="day-header">
+                <span>第三天</span>
+                <span>历史文化探索</span>
+            </div>
+            <div class="day-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="time">09:00-12:00</div>
+                        <div class="activity"><i class="fas fa-landmark"></i> 旅顺口景区(军港游园)</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>大连市旅顺口区黄河路10号</div>
+                        <div class="note">历史军事景区，了解近代历史，参观军港观景台</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">12:00-13:00</div>
+                        <div class="activity"><i class="fas fa-utensils"></i> 旅顺特色餐厅</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>当地海鲜餐厅或传统东北菜</div>
+                        <div class="note">推荐尝试：海鲜水饺、锅包肉</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">14:00-16:00</div>
+                        <div class="activity"><i class="fas fa-route"></i> 滨海路风光带</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>大连滨海路</div>
+                        <div class="note">被誉为"东方夏威夷"，欣赏城市风光和海景</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div class="time">16:30-20:00</div>
+                        <div class="activity"><i class="fas fa-shopping-bag"></i> 大连购物与美食</div>
+                        <div class="location"><i class="fas fa-map-marker-alt icon-container"></i>天津街商业区、西安路商业街</div>
+                        <div class="note">晚餐推荐：中原海鲜餐厅(大连人自家的小店)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 实用信息区 -->
+    <div class="info-section">
+        <div class="info-header">实用信息</div>
+        <div class="info-content">
+            <div class="info-item">
+                <i class="fas fa-hotel"></i>
+                <span>住宿: 星海广场亚朵S酒店</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-subway"></i>
+                <span>交通: 地铁1号线连接主要景点</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-credit-card"></i>
+                <span>消费: 景点门票总计约¥350</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-mobile-alt"></i>
+                <span>通信: 全程4G/5G网络覆盖</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-utensils"></i>
+                <span>特色美食: 海鲜水饺、烤冷面</span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-tshirt"></i>
+                <span>穿着: 带外套，昼夜温差大</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 紧急信息 -->
+    <div class="emergency">
+        <div><i class="fas fa-phone-alt"></i> 旅游咨询: 0411-12301</div>
+        <div><i class="fas fa-ambulance"></i> 急救电话: 120</div>
+        <div><i class="fas fa-shield-alt"></i> 报警电话: 110</div>
+        <div><i class="fas fa-taxi"></i> 出租车: 0411-96600</div>
+    </div>
+    
+    <!-- 打印按钮 -->
+    <button class="print-button no-print" onclick="window.print();">
+        <i class="fas fa-print"></i> 打印行程
+    </button>
+    
+    <script>
+        // 简单的脚本使打印按钮工作
+        document.querySelector('.print-button').addEventListener('click', function() {
+            window.print();
+        });
+    </script>
+</body>
+</html> 
